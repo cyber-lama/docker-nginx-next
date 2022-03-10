@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  frontend:
+    container_name: docker-frontend
+    image: node:17.6.0
+    working_dir: /home/node/app
+    command: "sh -c 'npm install && npm run build && npm run start'"
+    user: "node"
+    volumes:
+      - ./frontend:/home/node/app
+    networks:
+      - docker-network
+
+  api:
+    container_name: docker-api
+    image: node:17.6.0
+    working_dir: /home/node/app
+    command: "sh -c 'npm install && npm run start'"
+    user: "node"
+    restart: unless-stopped
+    volumes:
+      - ./api:/home/node/app
+    environment:
+      - PORT=3001
+      - HOST=docker.prod
+      - MONGO_URL=mongodb://api_db:27017/api
+    depends_on:
+      - api_db
+    networks:
+      - docker-network
+
+  api_db:
+    image: mongo:latest
+    container_name: docker-api-db
+    volumes:
+      - mongodb_api:/data/db
+    networks:
+      - docker-network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: docker-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - frontend
+      - api
+    networks:
+      - docker-network
+
+
+volumes:
+  mongodb_api:
+
+networks:
+  docker-network:
+    driver: bridge
