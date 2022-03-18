@@ -1,5 +1,6 @@
 import express from 'express';
 import {db, host, port} from "./configuration";
+import {connectDB} from "./helpers/db";
 
 const app = express();
 
@@ -14,9 +15,10 @@ const startServer = () => {
 app.get('/test', (req, res) => {
   res.send('test')
 })
-startServer()
 
-// connectDB()
-//     .on('error', () => console.log("err"))
-//     .on('disconnected', connectDB)
-//     .once('open', startServer)
+connectDB().then(() => {
+  startServer()
+}).catch(err => {
+  console.log(err)
+})
+
