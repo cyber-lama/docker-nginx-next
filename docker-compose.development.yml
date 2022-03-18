@@ -6,6 +6,10 @@ services:
 
   api:
     command: "sh -c 'npm install && npm run dev'"
+    environment:
+      - PORT=3001
+      - HOST=docker.local
+      - MONGO_URL=mongodb://api_db:27017/api
 
   nginx:
     volumes:
