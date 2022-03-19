@@ -1,0 +1,1 @@
+export type statusCode = 200 | 201 | 304 | 403 | 404 | 500

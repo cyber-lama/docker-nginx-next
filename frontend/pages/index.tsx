@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default function Home():JSX.Element {
     useEffect(() => {
-        axios('/api/test').then(res => {
+        axios.post('/api/test', {test: "test"}).then(res => {
             console.log(res)
         }).catch((error)=> {
             console.log(error)
