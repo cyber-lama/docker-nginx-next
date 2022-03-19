@@ -5,11 +5,12 @@ import { appConfig } from "../../config/types";
 import {Express} from "express/ts4.0";
 import TestController from "../Http/Controllers/TestController";
 import bodyParser from "body-parser";
-
+import log4js, {getLogger} from 'log4js'
 class App {
     protected appConfig: appConfig
     protected db: typeof import("mongoose")
     protected server: Express
+    protected logger:  log4js.Logger
     constructor() {
         this.appConfig = new AppConfig().getConfig()
         // запускам db, если успешно, запускаем сервер
@@ -25,6 +26,7 @@ class App {
     private async run() {
         this.runServe()
         this.runRouter()
+        this.runLogger()
     }
     private runServe() {
         this.server = express()
@@ -43,6 +45,13 @@ class App {
         this.server.post('/test', () => {
             new TestController(this.db, this.server).test()
         })
+        this.server.post('/let', () => {
+            new TestController(this.db, this.server).test()
+        })
+    }
+    private runLogger(){
+        this.logger = getLogger();
+        this.logger.level = "debug";
     }
 }
 
