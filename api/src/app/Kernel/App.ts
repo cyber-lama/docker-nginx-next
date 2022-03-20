@@ -1,16 +1,19 @@
 import AppConfig from "../../config/AppConfig";
 import ConnectDB from "../../database/ConnectDB";
-import express from "express";
+import express, {Express} from "express";
 import { appConfig } from "../../config/types";
-import {Express} from "express/ts4.0";
 import bodyParser from "body-parser";
 import log4js, {getLogger} from 'log4js'
 import Auth from "../Http/Controllers/Auth";
+import {requestsT} from "./types";
+
 class App {
     protected appConfig: appConfig
     protected db: typeof import("mongoose")
+    protected requests: requestsT
     protected server: Express
-    protected logger:  log4js.Logger
+    protected logger: log4js.Logger
+
     constructor() {
         this.appConfig = new AppConfig().getConfig()
         // запускам db, если успешно, запускаем сервер
@@ -36,14 +39,16 @@ class App {
         this.server.use(bodyParser.json())
         // добавляем в глобальный объект req и res
         this.server.use((req, res, next) => {
-            this.server.set('req', req)
-            this.server.set('res', res)
+            this.requests = {
+                _request: req,
+                _response: res
+            }
             next();
         });
     }
     private runRouter(){
         this.server.post('/registration', () => {
-            new Auth(this.db, this.server, this.logger).registration()
+            new Auth(this.db, this.requests, this.logger).registration()
         })
     }
     private runLogger(){

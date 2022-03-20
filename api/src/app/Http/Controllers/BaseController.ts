@@ -1,19 +1,20 @@
 import {Express} from "express/ts4.0";
 import {statusCodeError, statusCodeSuccess} from "./types";
 import log4js from "log4js";
+import {requestsT} from "../../Kernel/types";
 
 class BaseController{
     public logger?:log4js.Logger
-    db: typeof import("mongoose")
-    server: Express
-    constructor(db: typeof import("mongoose"), server: Express, logger?:log4js.Logger) {
+    public db: typeof import("mongoose")
+    public requests: requestsT
+    constructor(db: typeof import("mongoose"), requests: requestsT, logger?:log4js.Logger) {
         this.db = db
-        this.server = server
+        this.requests = requests
         this.logger = logger
     }
 
     public respond (code: statusCodeSuccess | statusCodeError, data: Record<string, unknown>){
-        this.server.get('res')
+        this.requests._response
             .status(code)
             .setHeader('content-type', 'application/json')
             .send(data)

@@ -1,15 +1,16 @@
 import {Express} from "express/ts4.0";
 import log4js from "log4js";
 import Validator from 'validatorjs';
+import {requestsT} from "../Kernel/types";
 
 
 class BaseValidate {
-    server: Express
+    public requests: requestsT
     public logger?:log4js.Logger
     rules: {[key:string]:string}
     errorMessages: Record<string, unknown>
-    constructor(server: Express, logger?:log4js.Logger) {
-        this.server = server
+    constructor(requests: requestsT, logger?:log4js.Logger) {
+        this.requests = requests
         this.logger = logger
         this.run()
     }
@@ -31,7 +32,7 @@ class BaseValidate {
     }
 
     public validateFields(): null | Record<string, unknown>{
-        const validation = new Validator(this.server.get('req').body, this.rules, this.errorMessages);
+        const validation = new Validator(this.requests._request.body, this.rules, this.errorMessages);
         if(!validation.passes()) return validation.errors
         return null
     }
