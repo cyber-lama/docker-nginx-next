@@ -1,0 +1,6 @@
+{
+  "user_email_required": "Введите email",
+  "user_password_required": "Введите пароль",
+  "user_password_valid": "Введите валидный пароль",
+  "user_email_valid": "Введите валидный email"
+}

@@ -3,9 +3,9 @@ import ConnectDB from "../../database/ConnectDB";
 import express from "express";
 import { appConfig } from "../../config/types";
 import {Express} from "express/ts4.0";
-import TestController from "../Http/Controllers/TestController";
 import bodyParser from "body-parser";
 import log4js, {getLogger} from 'log4js'
+import Auth from "../Http/Controllers/Auth";
 class App {
     protected appConfig: appConfig
     protected db: typeof import("mongoose")
@@ -42,11 +42,8 @@ class App {
         });
     }
     private runRouter(){
-        this.server.post('/test', () => {
-            new TestController(this.db, this.server).test()
-        })
-        this.server.post('/let', () => {
-            new TestController(this.db, this.server).test()
+        this.server.post('/registration', () => {
+            new Auth(this.db, this.server, this.logger).registration()
         })
     }
     private runLogger(){
